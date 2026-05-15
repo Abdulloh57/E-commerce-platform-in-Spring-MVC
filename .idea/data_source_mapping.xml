@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourcePerFileMappings">
+    <file url="file://$PROJECT_DIR$/src/main/java/library/uz/dao/ProductDatabase.java" value="d69ea63c-0086-426f-9736-3639a2f6f8d3" />
+    <file url="file://$PROJECT_DIR$/src/main/java/library/uz/dao/UserDatabase.java" value="d69ea63c-0086-426f-9736-3639a2f6f8d3" />
+  </component>
+</project>
