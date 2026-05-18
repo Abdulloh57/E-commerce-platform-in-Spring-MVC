@@ -44,7 +44,7 @@ public class HomeController {
     public String logout(Model model,HttpSession session){
         model.addAttribute("user",new UserLoginDto(null,null));
         session.invalidate();
-        return "login";
+        return "redirect:/login";
     }
 
 }

@@ -18,7 +18,12 @@ public class AuthFilter implements Filter {
         HttpSession session = request.getSession(false);
         Object user = (session != null) ? session.getAttribute("user") : null;
 
-        if (path.equals("/user/login") || path.equals("/user/register")){
+        if (
+                path.equals("/login") ||
+                        path.equals("/register") ||
+                        path.equals("/user/login") ||
+                        path.equals("/user/register")
+        ){
             filterChain.doFilter(servletRequest,servletResponse);
             return;
         }

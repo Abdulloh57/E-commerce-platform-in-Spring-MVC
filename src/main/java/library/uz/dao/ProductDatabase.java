@@ -2,7 +2,9 @@ package library.uz.dao;
 
 import library.uz.controller.dto.ProductCreateDto;
 import library.uz.model.Product;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
@@ -13,72 +15,45 @@ import java.util.ArrayList;
 import java.util.List;
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class ProductDatabase extends DatabaseConnection{
-    private String ADD_PRODUCT="Insert Into product(name,price,image_path) values (?,?,?)";
-    private String GET_ALL = "select * from product";
 
-    //nimadur qaytarish kerak
+    private final JdbcTemplate jdbcTemplate;
+
     public void addProduct(ProductCreateDto product, String imagePath){
-        try(Connection connection = getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(ADD_PRODUCT)){
-            preparedStatement.setString(1,product.name());
-            preparedStatement.setDouble(2,product.price());
-            preparedStatement.setString(3,imagePath);
-            preparedStatement.execute();
-        }catch (SQLException e){
-            e.printStackTrace();
-
-        }
+        String ADD_PRODUCT = "Insert Into product(name,price,image_path) values (?,?,?)";
+        jdbcTemplate.update(ADD_PRODUCT, product.name() , product.price() ,imagePath);
     }
 
     public List<Product> getAll(){
-        List<Product> products = new ArrayList<>();
-        try(Connection connection = getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement(GET_ALL)){
-            ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()){
-                Product product = new Product(
-                        resultSet.getInt("id"),
-                        resultSet.getString("name"),
-                        resultSet.getDouble("price"),
-                        resultSet.getString("image_path")
-                );
-                products.add(product);
-            }
-        }catch (SQLException e){
-            //bu yerda ham log yozilishi kerak
-            throw new RuntimeException();
-        }
-        return products;
+        return jdbcTemplate.query("select * from product" ,
+                (resultSet,rowNum) -> makeProduct(resultSet));
     }
 
-    public List<Product> getByOrder(List<Integer> ids) {
-        List<Product> products = new ArrayList<>();
+    public List<Product> getByOrder(List<Integer> ids){
         if (ids == null || ids.isEmpty()){
-            return products;
+            return new ArrayList<>();
         }
+        String QUERY = makeQUERY(ids);
+
+        return jdbcTemplate.query(QUERY, (resultSet, rowNum) -> makeProduct(resultSet));
+    }
+
+    private Product makeProduct(ResultSet resultSet) throws SQLException {
+        return new Product(
+                resultSet.getInt("id"),
+                resultSet.getString("name"),
+                resultSet.getDouble("price"),
+                resultSet.getString("image_path")
+        );
+    }
+
+    private String makeQUERY(List<Integer> ids){
         StringBuilder q = new StringBuilder();
         for (int i : ids){
             q.append(i).append(",");
         }
-        String GET_PRODUCTS = "select * from product where id in ("+q.substring(0, q.length() - 1)+")";
+        return "select * from product where id in ("+q.substring(0, q.length() - 1)+")";
 
-        try(Connection connection = getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement(GET_PRODUCTS)){
-            ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                Product product = new Product(
-                        resultSet.getInt("id"),
-                        resultSet.getString("name"),
-                        resultSet.getDouble("price"),
-                        resultSet.getString("image_path")
-                );
-                products.add(product);
-            }
-        }catch (SQLException e){
-            throw new RuntimeException("ERROR WHILE GET PRODUCTS");
-        }
-        return products;
     }
-
 }

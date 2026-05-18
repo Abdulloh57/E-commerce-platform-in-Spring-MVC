@@ -31,6 +31,7 @@
             <artifactId>thymeleaf-spring6</artifactId>
             <version>3.1.2.RELEASE</version>
         </dependency>
+
         <dependency>
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
@@ -47,6 +48,14 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>2.21.1</version>
+        </dependency>
+
+        <!-- Source: https://mvnrepository.com/artifact/org.springframework/spring-jdbc -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+            <version>7.0.7</version>
+            <scope>compile</scope>
         </dependency>
 
     </dependencies>

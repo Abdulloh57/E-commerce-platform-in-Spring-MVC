@@ -17,7 +17,7 @@ public class UserService {
 
     private final UserDatabase repository;
     public int register(UserCreateDto request){
-        return repository.AddUser(request);
+        return repository.addUser(request);
     }
 
 
