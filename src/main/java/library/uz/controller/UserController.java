@@ -27,7 +27,7 @@ public class UserController {
 
     @PostMapping("/register")
     public String login(@ModelAttribute UserCreateDto request) {
-        servise.register(request);
+        int register = servise.register(request);
         return "redirect:/login";
     }
 

@@ -2,6 +2,8 @@ package library.uz.controller;
 
 import library.uz.controller.dto.ProductCreateDto;
 
+import library.uz.controller.dto.ProductFilterdto;
+import library.uz.filter.productFilter.ProductFilter;
 import library.uz.model.Product;
 import library.uz.servise.FileServise;
 import library.uz.servise.ProductServise;
@@ -19,6 +21,7 @@ import java.util.List;
 public class ProductController {
     private final ProductServise service;
     private final FileServise fileServise;
+    private final List<ProductFilter> filters;
     @PostMapping
     public String addProduct(@ModelAttribute ProductCreateDto request, @RequestParam("file") MultipartFile file) throws IOException {
         String imagePath = fileServise.upload(file);
@@ -30,5 +33,18 @@ public class ProductController {
     @ResponseBody
     public List<Product> getAll(){
         return service.getAll();
+    }
+
+    @GetMapping("/filter")
+    @ResponseBody
+    public List<Product> filter(ProductFilterdto filterdto){
+        List<Product> products = service.getAll();
+
+        for (ProductFilter filter : filters){
+            if (filter.support(filterdto)){
+                products = filter.filter(products,filterdto);
+            }
+        }
+        return products;
     }
 }

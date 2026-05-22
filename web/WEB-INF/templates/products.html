@@ -85,6 +85,12 @@
 
                 <div class="card-header bg-dark text-white">
                     Products
+                    <div>
+                        <input id="Sname" placeholder="name" >
+                        <input id="Sprice" placeholder="price" >
+
+                        <button onclick="search()">search</button>
+                    </div>
                 </div>
 
                 <div class="card-body">
@@ -426,6 +432,30 @@
         document.getElementById("file").value="";
     }
 
+
+    function search(){
+        let name = document.getElementById("Sname").value;
+        let price = document.getElementById("Sprice").value;
+        let url = "/product/filter";
+
+        let params = [];
+
+        if (name && name.trim() !== "") {
+            params.push("name=" + encodeURIComponent(name));}
+        if (price && price.trim() !== "") {
+            params.push("price=" + encodeURIComponent(price));
+        }
+
+        if (params.length > 0) {
+            url += "?" + params.join("&");
+        }
+
+        fProduct(url);
+    }
+
+    function fProduct(URL){
+        fetch(URL).then(res => res.json()).then(data => render(data));
+    }
 </script>
 
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>

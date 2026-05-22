@@ -1,20 +1,12 @@
 package library.uz.dao;
 
-import library.uz.controller.dto.OrderCreateDto;
 import library.uz.controller.dto.OrderItemDto;
 import library.uz.model.Order;
-import library.uz.model.OrderItem;
 import library.uz.model.OrderStatus;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 @Component
