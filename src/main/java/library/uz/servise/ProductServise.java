@@ -1,8 +1,8 @@
 package library.uz.servise;
 
 import library.uz.controller.dto.ProductCreateDto;
-import library.uz.dao.ProductDatabase;
 import library.uz.model.Product;
+import library.uz.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -11,12 +11,16 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class ProductServise {
-    private final ProductDatabase repository;
+    private final ProductRepository repository;
     public void addProduct(ProductCreateDto request, String imagePath) {
-        repository.addProduct(request,imagePath);
+        Product product = new Product();
+        product.setName(request.name());
+        product.setPrice(request.price());
+        product.setImagePath(imagePath);
+        repository.save(product);
     }
 
     public List<Product> getAll() {
-       return repository.getAll();
+       return repository.findAll();
     }
 }

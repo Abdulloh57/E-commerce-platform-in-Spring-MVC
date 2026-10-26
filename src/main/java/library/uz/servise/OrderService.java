@@ -2,29 +2,34 @@ package library.uz.servise;
 
 import library.uz.controller.dto.OrderCreateDto;
 import library.uz.controller.dto.OrderItemDto;
-import library.uz.dao.OrderDatabase;
-import library.uz.dao.ProductDatabase;
 import library.uz.model.Order;
+import library.uz.model.OrderItem;
 import library.uz.model.OrderStatus;
 import library.uz.model.Product;
+import library.uz.repository.OrderItemRepository;
+import library.uz.repository.OrderRepository;
+import library.uz.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class OrderService {
-    private final OrderDatabase repository;
-    private final ProductDatabase productRepository;
+    private final OrderRepository repository;
+    private final OrderItemRepository orderItemRepository;
+    private final ProductRepository productRepository;
+
+    @Transactional
     public void addOrder(OrderCreateDto request){
         Order order = new Order();
         order.setUserid(request.userId());
 
 
         List<Integer> list = request.orderItems().stream().map(OrderItemDto::productId).toList();
-        List<Product>products = productRepository.getByOrder(list);
+        List<Product> products = productRepository.findByIdIn(list);
         double price = 0;
 
         for (Product product : products) {
@@ -39,12 +44,21 @@ public class OrderService {
         }
         order.setPrice(price);
         order.setStatus(OrderStatus.CREATED);
-        int orderId = repository.addOrder(order);
-        repository.addItem(orderId,request.orderItems());
+        Order savedOrder = repository.save(order);
+
+        List<OrderItem> items = request.orderItems().stream()
+                .map(item -> new OrderItem(
+                        null,
+                        savedOrder.getId(),
+                        item.productId(),
+                        item.quantity()
+                ))
+                .toList();
+        orderItemRepository.saveAll(items);
 
     }
 
     public List<Order> getOrderByUserId(int userId){
-        return repository.getOrdersByUserId(userId);
+        return repository.findByUseridOrderByIdDesc(userId);
     }
 }
