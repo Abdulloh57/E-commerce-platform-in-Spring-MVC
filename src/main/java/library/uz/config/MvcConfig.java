@@ -1,5 +1,6 @@
 package library.uz.config;
 
+import liquibase.integration.spring.SpringLiquibase;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -33,5 +34,13 @@ public class MvcConfig implements WebMvcConfigurer {
     @Bean
     public JdbcTemplate jdbcTemplate(DataSource dataSource){
         return new JdbcTemplate(dataSource);
+    }
+
+    @Bean
+    public SpringLiquibase liquibase(DataSource dataSource) {
+        SpringLiquibase liquibase = new SpringLiquibase();
+        liquibase.setDataSource(dataSource);
+        liquibase.setChangeLog("classpath:db/changelog/db.changelog-master.xml");
+        return liquibase;
     }
 }
